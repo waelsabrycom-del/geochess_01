@@ -21,31 +21,9 @@ app.use(helmet({
     crossOriginEmbedderPolicy: false
 }));
 
-// === أمان: CORS محدود ===
-const allowedOrigins = process.env.CORS_ORIGIN
-    ? process.env.CORS_ORIGIN.split(',').map(s => s.trim())
-    : (isProduction ? [] : ['http://localhost:3000', 'http://127.0.0.1:3000']);
-
+// === CORS ===
 app.use(cors({
-    origin: function(origin, callback) {
-        // السماح بالطلبات بدون origin (same-origin / أدوات مثل Postman)
-        if (!origin) {
-            return callback(null, true);
-        }
-        // السماح دائماً في التطوير
-        if (!isProduction) {
-            return callback(null, true);
-        }
-        // السماح بالأصول المحددة في CORS_ORIGIN
-        if (allowedOrigins.length > 0 && allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-        // السماح إذا لم تُحدد أصول (الفرونت والباك على نفس السيرفر)
-        if (allowedOrigins.length === 0) {
-            return callback(null, true);
-        }
-        callback(new Error('غير مسموح من CORS'));
-    },
+    origin: true,
     credentials: true
 }));
 
